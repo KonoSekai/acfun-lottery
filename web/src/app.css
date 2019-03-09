@@ -1,0 +1,65 @@
+.main {height: 100%;min-height: 900px;min-width: 1440px;position: relative;width: 100%;z-index: 1;}
+
+.main .content {margin: 0 auto;max-width: 900px;min-height: 100%;padding: 50px 0 80px;position: relative;width: 100%;}
+
+.main .content .page_footer {bottom: 0;font-size: 14px;font-weight: 700;height: 50px;line-height: 24px;opacity: 0.75;position: absolute;text-align: center;width: 100%;}
+
+.main .content .section {background: #FFF;border: 1px solid #DCDEE2;border-radius: 4px;box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .1);box-sizing: border-box;margin: 8px;padding: 30px;position: relative;width: calc(100% - 16px);}
+
+.main .content .section .header {margin: 20px 0;text-align: center;}
+
+.main .content .section .header .logo {color: #FC4D5B;font-size: 30px;font-weight: 900;}
+
+.main .content .section .header .title {font-size: 21px;}
+
+.main .content .section .center {padding: 20px;}
+
+.main .content .section .center .center-row {margin: 20px 0;}
+
+.main .content .section .footer .result-list {border: 1px solid #DCDEE2;border-radius: 4px;margin: 20px 0;padding: 10px 15px 30px;}
+
+.main .content .section .footer .result {overflow: hidden;padding: 0 15px;}
+
+.main .content .section .footer .result .result-avatar {float: left;position: relative;}
+
+.main .content .section .footer .result .result-avatar .user-avatar {border: 1px solid #FFF;border-radius: 50%;box-shadow: 0 0 0 transparent;height: 50px;margin-top: 17px;width: 50px;}
+
+.main .content .section .footer .result .result-avatar .user-avatar-bg {background-color: transparent;border: none;left: -15px;position: absolute;top: 0;}
+
+.main .content .section .footer .result .result-comment {float: right;margin-top: 17px;width: 688px;}
+
+.main .content .section .footer .result .result-comment .comment-header {color: #999}
+
+.main .content .section .footer .result .result-comment .comment-content {color: #333;padding: 10px 0;}
+
+.main .content .section .footer .result .result-comment .comment-footer {color: #999;overflow: hidden;}
+
+.main .content .section .footer .result .result-comment .comment-footer .mail-span {float: right;}
+
+.main .content .section .footer .result .horizontal-rule {border: 1px solid #CCC;border-bottom: 0;margin: 10px 0;width: 100%;}
+
+.main .affix {bottom: 30px;left: 30px;position: fixed;z-index: 99999;}
+
+.main .affix a {color: #333 !important;}
+
+.main .affix img {margin-right: 20px;}
+
+.main .affix .icon-button {background-color: #FFF;border: 1px solid #DCDEE2;border-radius: 24px;box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .1);box-sizing: border-box;font-size: 16px;line-height: 48px;margin: 10px 0;padding: 0 10px;width: 200px;}
+
+.main .record-button {bottom: 20px;color: #FFF;cursor: pointer;right: 20px;position: fixed;z-index: 8}
+
+.name-gray {color: #999 !important;}
+
+.name-red {color: #EE003E !important;}
+
+.name-orange {color: #FF9101 !important;}
+
+.name-purple {color: #9B59B6 !important;}
+
+.records-comment1 {border: 1px solid #DCDEE2;border-radius: 4px;box-sizing: border-box;line-height: 38px;margin: 10px 0;min-height: 80px;min-width: 100% !important;padding: 20px 10px;}
+
+.records-comment2 {
+  display:         flex;
+  justify-content: center;
+  align-items:     Center;
+}

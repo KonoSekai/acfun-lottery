@@ -1,0 +1,19 @@
+::-webkit-scrollbar {background-color: transparent;width: 8px;height: 6px;}
+
+::-webkit-scrollbar-track-piece {background-color: transparent;-webkit-border-radius: 6px;}
+
+::-webkit-scrollbar-thumb:vertical {background-color: #999;height: 5px;-webkit-border-radius: 6px;}
+
+::-webkit-scrollbar-thumb:horizontal {background-color: #999;width: 5px;-webkit-border-radius: 6px;}
+
+body {background: url("/static/img/bg.jpg") no-repeat fixed center;background-size: cover;bottom: 0;left: 0;overflow: auto;position: fixed;right: 0;top: 0;will-change: transform;z-index: -1;}
+
+a {color: #515A6E !important;}
+
+a:hover {color: #2B85E4 !important;}
+
+.layout-container {height: 100%;overflow-y: scroll;position: absolute;width: 100%;z-index: 999;}
+
+.light-gray-font {color: #EEE;font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", FontAwesome, sans-serif;}
+
+.light-gray-font a {color: #EEE !important}

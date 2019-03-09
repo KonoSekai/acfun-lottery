@@ -94,14 +94,27 @@
         this.getTabInfo().then(() => {
           //调用获取commentinfo函数
           this.getCommentInfo().then(() => {
-            //调用抽奖函数
-            this.getLotteryResults()
-            this.disabled = true
-          }).catch(() => {
+            //如果评论数量超过1页调用getOverplusComment
+            if (this.totalPage > 1) {
+              this.getOverplusComment(2).then(() => {
+                //调用抽奖函数
+                this.getLotteryResults()
+                this.disabled = true
+              }).catch((err) => {
+                console.log(err)
+              })
+            } else {
+              //调用抽奖函数
+              this.getLotteryResults()
+              this.disabled = true
+            }
+          }).catch((err) => {
+            console.log(err)
             this.$Message.warning('发生了错误呢(　^ω^)b')
             this.disabled = true
           })
-        }).catch(() => {
+        }).catch((err) => {
+          console.log(err)
           this.$Message.warning('本页面不能进行抽奖呢(　^ω^)b')
           this.disabled = true
         })
@@ -165,13 +178,11 @@
               reject()
             } else {
               //清空评论
-              this.comments.clear()
+              this.comments = new Map()
               //保存commentinfo
               this.totalPage = data.totalPage
               this.totalCount = data.totalCount
               this.pushComment(data.commentsMap)
-              //如果评论数量超过1页调用getOverplusComment
-              if (data.totalPage > 1) this.getOverplusComment()
               //正常执行结束
               resolve()
             }
@@ -185,44 +196,90 @@
         let results = new Set()
         let number = this.number
         let comments = this.comments
-
-        let size = comments.size
-        let keys = [...comments.keys()]
+        let keys = Array.from(comments.keys())
 
         if (number > keys.length) {
           number = keys.length
           this.$Message.warning('只能抽这几个人了呢(　^ω^)b')
         }
 
-        while (number > results.size) {
-          let random = Math.floor(Math.random() * size)
-          let result = comments.get(keys[random])
-          //调用处理图片格式和表情格式函数
+        while (results.size < number) {
+          if (keys.length < 1) break
+
+          let random = Math.floor(Math.random() * keys.length)
+          let key = keys[random]
+          let result = comments.get(key)
+          //调用处理评论格式函数
           result.content = this.handleContent(result.content)
           //储存结果
           results.add(result)
+          keys.splice(random, 1)
         }
 
+        //对results排序
+        results = Array.from(results)
+        results.sort((x, y) => {
+          return y.floor - x.floor
+        })
+
         this.number = number
-        this.results = [...results]
+        this.results = results
       },
       //获取剩余页面评论
-      getOverplusComment() {
-        for (let i = 2; i <= this.totalPage; i++)
+      getOverplusComment(i) {
+        return new Promise((resolve, reject) => {
+          if (this.totalPage < i) {
+            resolve()
+            return
+          }
           axios.get(`${this.url}&page=${i}`).then((res) => {
             this.pushComment(res.data.commentsMap)
+            this.getOverplusComment(i + 1).then(() => {
+              resolve()
+            }).catch((err) => {
+              reject(err)
+            })
+          }).catch((err) => {
+            reject(err)
           })
+        })
       },
       //处理图片格式和表情格式函数
       handleContent(content) {
-        let emotRegex = /(\[emot=)(\w+)(,)(\w+)(\/])/g //处理表情正则表达式
-        let imgRegex = /(\[img=图片])(.*?)(\[\/img])/g //处理图片正则表达式
-        //处理图片格式
-        content = content.replace(imgRegex, `<img src="$2" style="max-width: 250px"><br>`)
-        //处理表情格式
-        content = content.replace(emotRegex, `<img src="http://cdn.aixifan.com/dotnet/20130418/umeditor/dialogs/emotion/images/$2/$4.gif" style="max-width: 88px">`)
+        let regex = [
+          //处理表情正则表达式
+          [/(\[emot=)(\w+)(,)(\w+)(\/])/g, `<img src="http://cdn.aixifan.com/dotnet/20130418/umeditor/dialogs/emotion/images/$2/$4.gif" style="max-width: 88px">`],
+          //处理At正则表达式
+          [/(\[at])(.*?)(\[\/at])/g, `<a href="http://www.acfun.cn/member/findUser.aspx?userName=$2" style="color: #2B85E4 !important;" target="_blank">@$2</a>`],
+          //处理ac号正则表达式
+          [/(\[ac=)(.*?)(])(.*?)(\[\/ac])/g, `<a href="http://www.acfun.cn/a/$4" style="color: #2B85E4 !important;" target="_blank">$4</a>`],
+          //处理字体大小正则表达式
+          [/(\[size=)(.*?)(])(.*?)(\[\/size])/g, `<span style="font-size: $2">$4</span>`],
+          //处理图片正则表达式
+          [/(\[img=图片])(.*?)(\[\/img])/g, `<img src="$2" style="max-width: 250px"><br>`],
+          //处理字体颜色正则表达式
+          [/(\[color=)(.*?)(])(.*?)(\[\/color])/g, `<span color="$2">$4</span>`],
+          //处理字体删除线正则表达式
+          [/(\[s])(.*?)(\[\/s])/g, `<del">$2</del>`],
+          //处理字体加粗正则表达式
+          [/(\[b])(.*?)(\[\/b])/g, `<b">$2</b>`],
+          //处理字体下划线正则表达式
+          [/(\[u])(.*?)(\[\/u])/g, `<u">$2</u>`],
+          //处理字体倾斜正则表达式
+          [/(\[i])(.*?)(\[\/i])/g, `<i">$2</i>`],
+          //处理换行正则表达式
+          [/&lt;br\/&gt;/g, `<br>`],
+          //处理空格正则表达式
+          [/&amp;nbsp;/g, `&nbsp;`]
+        ]
+
+        regex.forEach((reg) => {
+          content = content.replace(reg[0], reg[1])
+        })
+
         return content
       },
+      //将评论储存进comments中
       pushComment(commentsMap) {
         let repeat = this.repeat
         for (let prop in commentsMap) {
