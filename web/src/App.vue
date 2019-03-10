@@ -281,14 +281,14 @@
             this.getOverplusCommentFunction(2).then(() => {
               //调用抽奖函数
               this.getLotteryResultsFunction()
-            }).catch(() => {
+            }).catch((err) => {
               console.log(err)
             })
           } else {
             //调用抽奖函数
             this.getLotteryResultsFunction()
           }
-        }).catch(() => {
+        }).catch((err) => {
           console.log(err)
         })
 
