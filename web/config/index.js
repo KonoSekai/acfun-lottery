@@ -49,12 +49,6 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {
-      '/rest': {
-        changeOrigin:true,
-        target:'http://www.acfun.cn/',
-      }
-    },
     /**
      * Source Maps
      */

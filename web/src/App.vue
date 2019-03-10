@@ -96,11 +96,11 @@
     <!--抽屉-->
     <Drawer title="抽奖记录" width="500" v-model="exchange">
       <div>
-        <div v-for="record in records">
+        <div v-for="record in getRecordsFunction()">
           <p>
             <span style="margin-left: 10px">AC号:</span>
             <a target="_blank" :href="`http://www.acfun.cn/a/ac${record.acid}`">ac{{record.acid}}</a>
-            <span style="float: right;margin-right: 10px;">{{getRecordDate(record.date)}}</span>
+            <span style="float: right;margin-right: 10px;">{{getRecordDateFunction(record.date)}}</span>
           </p>
           <div :class="{'records-comment1':true,'records-comment2':record.results.length == 1}">
             <p style="min-width: 100%" v-for="result in record.results">
@@ -128,7 +128,6 @@
       </a>
     </div>
     <div class="record-button" @click="exchange = !exchange">抽奖记录</div>
-    <BackTop></BackTop>
   </div>
 </template>
 
@@ -170,31 +169,9 @@
       //页面路径
       url() {
         return `/rest/pc-direct/comment/listByFloor?sourceId=${this.acid}&sourceType=${this.sourceType}&pivotCommentId=0&_=${this.time}`
-      },
-      //抽奖结果记录
-      records() {
-        let records = get('records')
-        if (records == null) records = []
-        return records
       }
     },
     methods: {
-      //处理日期格式函数
-      getRecordDate(date) {
-        date = new Date(date)
-        let year = date.getFullYear()
-        year = year == new Date().getFullYear() ? '' : `${year}-`
-        let month = date.getMonth()
-        month = month < 9 ? `0${month + 1}` : month + 1
-        let day = date.getDate()
-        day = day < 10 ? `0${day}` : day
-        let hours = date.getHours()
-        hours = hours < 10 ? `0${hours}` : hours
-        let minutes = date.getMinutes()
-        minutes = minutes < 10 ? `0${minutes}` : hours
-
-        return `${year}${month}-${day} ${hours}:${minutes}`
-      },
       //页面地址事件绑定函数
       acUrlChangeEvent() {
         let url = this.acUrl
@@ -242,6 +219,12 @@
       repeatChangeEvent() {
         set('repeat', this.repeat)
       },
+      //抽奖结果记录
+      getRecordsFunction() {
+        let records = get('records')
+        if (records == null) records = []
+        return records
+      },
       //储存抽奖记录函数
       saveRecordsFunction() {
         let records = get('records')
@@ -281,6 +264,7 @@
             this.getOverplusCommentFunction(2).then(() => {
               //调用抽奖函数
               this.getLotteryResultsFunction()
+              this.loading = false
             }).catch((err) => {
               console.log(err)
             })
@@ -291,8 +275,6 @@
         }).catch((err) => {
           console.log(err)
         })
-
-        this.loading = false
       },
       //获取commentinfo函数
       getCommentInfoFunction() {
@@ -302,7 +284,7 @@
             //判断评论数量
             if (data.totalCount < 1) {
               this.$Message.warning('一条评论都没有你还想抽奖?(　^ω^)b')
-              reject()
+              reject(res)
             } else {
               //清空评论
               this.comments = new Map()
@@ -312,12 +294,28 @@
               this.pushCommentFunction(data.commentsMap)
               resolve()
             }
-          }).catch(() => {
+          }).catch((err) => {
             this.$Message.error('发生了错误呢(　^ω^)b')
             this.disabled = true
-            reject()
+            reject(err)
           })
         })
+      },
+      //处理日期格式函数
+      getRecordDateFunction(date) {
+        date = new Date(date)
+        let year = date.getFullYear()
+        year = year == new Date().getFullYear() ? '' : `${year}-`
+        let month = date.getMonth()
+        month = month < 9 ? `0${month + 1}` : month + 1
+        let day = date.getDate()
+        day = day < 10 ? `0${day}` : day
+        let hours = date.getHours()
+        hours = hours < 10 ? `0${hours}` : hours
+        let minutes = date.getMinutes()
+        minutes = minutes < 10 ? `0${minutes}` : hours
+
+        return `${year}${month}-${day} ${hours}:${minutes}`
       },
       //获取抽奖结果函数
       getLotteryResultsFunction() {
